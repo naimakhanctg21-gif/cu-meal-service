@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CU Meal Service - Customer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:#22c55e; --accent:#3b82f6; --bg:#f4f4f8; --card:#fff; --text:#111;
+  --muted:#555;
+}
+body {margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text);}
+.wrap {max-width:600px;margin:20px auto;padding:16px;}
+header {text-align:center;margin-bottom:20px;}
+header img {width:60px;display:block;margin:0 auto 10px;}
+h1 {font-size:22px;margin:0;}
+.card {background:var(--card);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+input, select, button, textarea {width:100%;padding:10px 12px;margin-top:6px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc;font-size:14px;}
+button {background:var(--primary);color:#fff;font-weight:600;border:none;cursor:pointer;transition:0.2s;}
+button:hover {opacity:0.9;}
+table {width:100%;border-collapse:collapse;margin-top:10px;}
+th, td {padding:10px;border-bottom:1px solid #ddd;text-align:left;}
+th {background:#dcfce7;color:#166534;}
+.pill {display:inline-block;padding:4px 10px;border-radius:999px;background:#e0f2fe;color:#0369a1;font-size:12px;}
+.item-group {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+.item-card {background:#f0fdf4;border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:0.2s;}
+.item-card:hover {background:#d9f99d;}
+.item-card input {margin-bottom:6px;}
+.item-card img {width:40px;height:40px;margin-bottom:6px;}
+@media(max-width:480px){h1{font-size:20px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" alt="Logo">
+    <h1>🍱 CU Meal Service</h1>
+  </header>
+
+  <!-- Login -->
+  <div class="card" id="loginCard">
+    <label>আপনার মোবাইল নম্বর লিখুন</label>
+    <input id="c_phone" placeholder="01XXXXXXXXX">
+    <button id="btnLogin">Login</button>
+  </div>
+
+  <!-- Order Form -->
+  <div class="card" id="orderCard" style="display:none;">
+    <h3>📝 অর্ডার দিন</h3>
+    <label>নাম</label>
+    <input id="c_name" placeholder="আপনার নাম">
+    <label>ডেলিভারি ঠিকানা</label>
+    <input id="c_address" placeholder="হাটহাজারী, চট্টগ্রাম…">
+    <label>ডেলিভারি টাইম</label>
+    <select id="c_slot">
+      <option value="Breakfast">Breakfast (7–9am)</option>
+      <option value="Lunch">Lunch (12–2pm)</option>
+      <option value="Dinner">Dinner (7–9pm)</option>
+    </select>
+    
+    <label>🍽️ মেনু নির্বাচন করুন</label>
+    <div class="item-group">
+      <div class="item-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="">
+        <label><input type="checkbox" class="item" value="Quail Egg"> কোয়েল ডিম</label>
+      </div>
+      <div class="item-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/590/590685.png" alt="">
+        <label><input type="checkbox" class="item" value="Banana"> কলা</label>
+      </div>
+      <div class="item-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" alt="">
+        <label><input type="checkbox" class="item" value="Bread"> পাউরুটি</label>
+      </div>
+      <div class="item-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075971.png" alt="">
+        <label><input type="checkbox" class="item" value="Rice"> ভাত</label>
+      </div>
+      <div class="item-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/1046/1046769.png" alt="">
+        <label><input type="checkbox" class="item" value="Chicken Curry"> মুরগির ঝোল</label>
+      </div>
+    </div>
+
+    <label>বিশেষ নির্দেশনা</label>
+    <textarea id="c_note" placeholder="চিনি কম, মশলা কম ইত্যাদি"></textarea>
+    <label>পেমেন্ট মেথড</label>
+    <select id="c_payment">
+      <option value="COD">Cash on Delivery</option>
+      <option value="Bkash">Bkash</option>
+      <option value="Nagad">Nagad</option>
+    </select>
+    <button id="btnPlace">✅ অর্ডার দিন</button>
+  </div>
+
+  <!-- My Orders -->
+  <div class="card" id="myOrdersCard" style="display:none;">
+    <h3>📦 আমার অর্ডার</h3>
+    <table>
+      <thead>
+        <tr><th>সময়</th><th>আইটেম</th><th>স্ট্যাটাস</th></tr>
+      </thead>
+      <tbody id="myOrders">
+        <tr><td colspan="3">আপনার অর্ডার এখানে দেখানো হবে।</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script type="module">
+// Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDolg3y794G71TuTRcjKAiT29wOfYj7Osk",
+  authDomain: "cu-meal-service.firebaseapp.com",
+  databaseURL: "https://cu-meal-service-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "cu-meal-service",
+  storageBucket: "cu-meal-service.firebasestorage.app",
+  messagingSenderId: "474810798000",
+  appId: "1:474810798000:web:8f7fc41d0d38ab97f41075"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const ORDERS = ref(db,'orders');
+
+const loginCard = document.getElementById('loginCard');
+const orderCard = document.getElementById('orderCard');
+const myOrdersCard = document.getElementById('myOrdersCard');
+
+let myPhone = '';
+
+// Login
+document.getElementById('btnLogin').onclick = ()=>{
+  const phone = document.getElementById('c_phone').value.trim();
+  if(!phone){alert('মোবাইল নম্বর লিখুন'); return;}
+  myPhone = phone;
+  localStorage.setItem('myPhone', phone);
+  loginCard.style.display = 'none';
+  orderCard.style.display = 'block';
+  myOrdersCard.style.display = 'block';
+  loadMyOrders();
+};
+
+// Place Order
+document.getElementById('btnPlace').onclick = ()=>{
+  const name = document.getElementById('c_name').value.trim();
+  const address = document.getElementById('c_address').value.trim();
+  const slot = document.getElementById('c_slot').value;
+  const items = Array.from(document.querySelectorAll('.item:checked')).map(i=>i.value);
+  const note = document.getElementById('c_note').value.trim();
+  const payment = document.getElementById('c_payment').value;
+  if(!name||!address||items.length===0){alert('দয়া করে সব তথ্য পূরণ করুন'); return;}
+  const id = Date.now().toString();
+  set(ref(db,'orders/'+id),{
+    id, customer:{name, phone:myPhone, address}, slot, items, note, payment, status:'Pending'
+  });
+  alert('অর্ডার নেওয়া হয়েছে!');
+  Array.from(document.querySelectorAll('.item')).forEach(i=>i.checked=false);
+  document.getElementById('c_note').value='';
+};
+
+// Load My Orders
+function loadMyOrders(){
+  onValue(ORDERS, snap=>{
+    const data = snap.val()||{};
+    const tbody = document.getElementById('myOrders');
+    const rows = Object.values(data)
+      .filter(o=>o.customer?.phone===myPhone)
+      .sort((a,b)=>b.id-a.id)
+      .map(o=>`<tr>
+        <td>${new Date(parseInt(o.id)).toLocaleString()}</td>
+        <td>${o.items.join(', ')}</td>
+        <td><span class="pill">${o.status}</span></td>
+      </tr>`).join('');
+    tbody.innerHTML = rows || '<tr><td colspan="3">কোনো অর্ডার পাওয়া যায়নি।</td></tr>';
+  });
+}
+</script>
+</body>
+</html>
