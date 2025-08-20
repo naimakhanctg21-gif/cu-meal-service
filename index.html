@@ -1,14 +1,16 @@
-
 <!doctype html>
 <html lang="bn">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CU Meal Service</title>
+<title>CU Meal Service — Customer</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary:#22c55e; --accent:#3b82f6; --bg:#f4f4f8; --card:#fff; --text:#111;
+  --primary:#22c55e; 
+  --bg:#f4f4f8; 
+  --card:#fff; 
+  --text:#111;
 }
 body {margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text);}
 .wrap {max-width:600px;margin:20px auto;padding:16px;}
@@ -22,13 +24,16 @@ button:hover {opacity:0.9;}
 table {width:100%;border-collapse:collapse;margin-top:10px;}
 th, td {padding:10px;border-bottom:1px solid #ddd;text-align:left;}
 th {background:#dcfce7;color:#166534;}
-.pill {display:inline-block;padding:4px 10px;border-radius:999px;background:#e0f2fe;color:#0369a1;font-size:12px;}
+.pill {display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;}
+.pill.Pending {background:#fef3c7;color:#92400e;}
+.pill.Delivered {background:#dcfce7;color:#166534;}
 .item-group {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
 .item-card {background:#f0fdf4;border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:0.2s;}
-.item-card:hover {background:#d9f99d;}
+.item-card:hover {background:#bef264;}
 .item-card input {margin-bottom:6px;}
 .item-card img {width:40px;height:40px;margin-bottom:6px;}
-.qty-input{width:50px;margin-left:6px;}
+.qty-input{width:60px;margin-left:6px;}
+.summary {margin-top:10px;font-weight:600;font-size:16px;}
 @media(max-width:480px){h1{font-size:20px;}}
 </style>
 </head>
@@ -54,10 +59,8 @@ th {background:#dcfce7;color:#166534;}
     <h3>📝 অর্ডার দিন</h3>
     <label>নাম</label>
     <input id="c_name" placeholder="আপনার নাম">
-
     <label>মোবাইল নাম্বার</label>
     <input id="c_phone" placeholder="01XXXXXXXXX">
-
     <label>ডেলিভারি ঠিকানা</label>
     <input id="c_address" placeholder="হাটহাজারী, চট্টগ্রাম…">
     <label>ডেলিভারি টাইম</label>
@@ -69,29 +72,34 @@ th {background:#dcfce7;color:#166534;}
 
     <label>🍽️ মেনু নির্বাচন করুন</label>
     <div class="item-group">
-      <div class="item-card">
+      <div class="item-card" data-price="20">
         <img src="কোয়েল.png" alt="">
-        <label><input type="checkbox" class="item" value="Quail Egg"> কোয়েল ডিম</label>
+        <label><input type="checkbox" class="item" value="Quail Egg"> কোয়েল ডিম (৳৫)</label>
         <input type="number" class="qty-input" value="1" min="1">
       </div>
-      <div class="item-card">
-        <img src="cu.png"alt="">
-        <label><input type="checkbox" class="item" value="Banana"> কলা</label>
+      <div class="item-card" data-price="15">
+        <img src="কলা.png" alt="">
+        <label><input type="checkbox" class="item" value="Banana"> কলা (৳5)</label>
         <input type="number" class="qty-input" value="1" min="1">
       </div>
-      <div class="item-card">
+       <div class="item-card" data-price="10">
+   <img src="কোয়েল.png" alt="">
+   <label><input type="checkbox" class="item" value="সকালের নাস্তা"> পাউরুটি,কলা,ডিম (৳১৫)</label>
+   <input type="number" class="qty-input" value="1" min="1">
+ </div>
+      <div class="item-card" data-price="10">
         <img src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" alt="">
-        <label><input type="checkbox" class="item" value="Bread"> পাউরুটি</label>
+        <label><input type="checkbox" class="item" value="Bread"> পাউরুটি (৳10)</label>
         <input type="number" class="qty-input" value="1" min="1">
       </div>
-      <div class="item-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075971.png" alt="">
-        <label><input type="checkbox" class="item" value="Rice"> ভাত</label>
+      <div class="item-card" data-price="30">
+        <img src="ভাত.png" alt="">
+        <label><input type="checkbox" class="item" value="Rice"> ভাত (৳30)</label>
         <input type="number" class="qty-input" value="1" min="1">
       </div>
-      <div class="item-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/1046/1046769.png" alt="">
-        <label><input type="checkbox" class="item" value="Chicken Curry"> মুরগির ঝোল</label>
+      <div class="item-card" data-price="120">
+        <img src="মুরগী.png" alt="">
+        <label><input type="checkbox" class="item" value="Chicken Curry"> মুরগি ভাত (৳120)</label>
         <input type="number" class="qty-input" value="1" min="1">
       </div>
     </div>
@@ -106,6 +114,8 @@ th {background:#dcfce7;color:#166534;}
       <option value="Nagad">Nagad</option>
     </select>
 
+    <div class="summary" id="orderSummary">মোট: ৳0 (ডেলিভারি: ৳20) মোট সমান: ৳20</div>
+
     <button id="btnPlace">✅ অর্ডার দিন</button>
   </div>
 
@@ -114,10 +124,19 @@ th {background:#dcfce7;color:#166534;}
     <h3>📦 আমার অর্ডার</h3>
     <table>
       <thead>
-        <tr><th>সময়</th><th>আইটেম</th><th>পরিমাণ</th><th>ফোন</th><th>স্ট্যাটাস</th></tr>
+        <tr>
+          <th>সময়</th>
+          <th>আইটেম</th>
+          <th>পরিমাণ</th>
+          <th>ফোন</th>
+          <th>মোট</th>
+          <th>ডেলিভারি</th>
+          <th>মোট সমান</th>
+          <th>স্ট্যাটাস</th>
+        </tr>
       </thead>
       <tbody id="myOrders">
-        <tr><td colspan="5">আপনার অর্ডার এখানে দেখানো হবে।</td></tr>
+        <tr><td colspan="8">আপনার অর্ডার এখানে দেখানো হবে।</td></tr>
       </tbody>
     </table>
   </div>
@@ -133,7 +152,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyDolg3y794G71TuTRcjKAiT29wOfYj7Osk",
   authDomain: "cu-meal-service.firebaseapp.com",
@@ -158,6 +176,7 @@ const myOrdersCard = document.getElementById('myOrdersCard');
 const logoutCard = document.getElementById('logoutCard');
 
 let currentUserEmail = '';
+const DELIVERY_CHARGE = 20; // ডেলিভারি চার্জ
 
 // Register
 document.getElementById('btnRegister').onclick = ()=>{
@@ -193,6 +212,7 @@ onAuthStateChanged(auth,user=>{
     myOrdersCard.style.display="block";
     logoutCard.style.display="block";
     loadMyOrders();
+    updateSummary();
   }else{
     currentUserEmail = '';
     authCard.style.display="block";
@@ -200,6 +220,22 @@ onAuthStateChanged(auth,user=>{
     myOrdersCard.style.display="none";
     logoutCard.style.display="none";
   }
+});
+
+// Update summary
+function updateSummary(){
+  const itemsChecked = Array.from(document.querySelectorAll('.item')).filter(i=>i.checked);
+  let itemsTotal = 0;
+  itemsChecked.forEach(i=>{
+    const price = parseFloat(i.closest('.item-card').dataset.price);
+    const qty = parseInt(i.parentElement.nextElementSibling.value) || 1;
+    itemsTotal += price * qty;
+  });
+  const total = itemsTotal + DELIVERY_CHARGE;
+  document.getElementById('orderSummary').textContent = `মোট: ৳${itemsTotal} (ডেলিভারি: ৳${DELIVERY_CHARGE}) মোট সমান: ৳${total}`;
+}
+document.querySelectorAll('.item, .qty-input').forEach(el=>{
+  el.addEventListener('change', updateSummary);
 });
 
 // Place Order
@@ -214,23 +250,28 @@ document.getElementById('btnPlace').onclick = ()=>{
   const itemsChecked = Array.from(document.querySelectorAll('.item')).filter(i=>i.checked);
   if(!name||!phone||!address||itemsChecked.length===0){alert('সব তথ্য পূরণ করুন'); return;}
 
-  const items = itemsChecked.map((i,idx)=>{
-    const qty = i.parentElement.nextElementSibling.value || 1;
-    return {name:i.value, qty:qty};
+  const items = itemsChecked.map((i)=>{
+    const qty = parseInt(i.parentElement.nextElementSibling.value) || 1;
+    const price = parseFloat(i.closest('.item-card').dataset.price);
+    return {name:i.value, qty:qty, price:price};
   });
+
+  const itemsTotal = items.reduce((sum,it)=>sum + it.qty*it.price,0);
+  const total = itemsTotal + DELIVERY_CHARGE;
 
   const id = Date.now().toString();
   set(ref(db,'orders/'+id),{
     id,
     customer:{email:currentUserEmail,name,phone,address},
-    slot,items,note,payment,status:'Pending'
+    slot,items,note,payment,status:'Pending',itemsTotal,delivery:DELIVERY_CHARGE,total
   });
 
-  alert('অর্ডার নেওয়া হয়েছে!');
+  alert(`অর্ডার নেওয়া হয়েছে! মোট: ৳${total}`);
   itemsChecked.forEach(i=>i.checked=false);
   document.querySelectorAll('.qty-input').forEach(q=>q.value=1);
   document.getElementById('c_note').value='';
   document.getElementById('c_phone').value='';
+  updateSummary();
 };
 
 // Load Orders
@@ -239,7 +280,8 @@ function loadMyOrders(){
   onValue(ORDERS,snap=>{
     const data = snap.val()||{};
     const tbody = document.getElementById('myOrders');
-    const rows = Object.values(data).filter(o=>o.customer.email===currentUserEmail)
+    const rows = Object.values(data)
+      .filter(o=>o.customer.email===currentUserEmail)
       .sort((a,b)=>b.id-a.id)
       .map(o=>{
         return `<tr>
@@ -247,10 +289,13 @@ function loadMyOrders(){
           <td>${o.items.map(it=>it.name).join(', ')}</td>
           <td>${o.items.map(it=>it.qty).join(', ')}</td>
           <td>${o.customer.phone}</td>
-          <td><span class="pill">${o.status}</span></td>
+          <td>৳${o.itemsTotal}</td>
+          <td>৳${o.delivery}</td>
+          <td>৳${o.total}</td>
+          <td><span class="pill ${o.status}">${o.status}</span></td>
         </tr>`;
       }).join('');
-    tbody.innerHTML = rows || '<tr><td colspan="5">কোনো অর্ডার পাওয়া যায়নি।</td></tr>';
+    tbody.innerHTML = rows || '<tr><td colspan="8">কোনো অর্ডার পাওয়া যায়নি।</td></tr>';
   });
 }
 </script>
